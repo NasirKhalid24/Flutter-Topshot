@@ -1,7 +1,5 @@
-**:rotating_light: :sos: IMPORTANT: This app is decomissioned since the TopShot Marketplace API is no longer publically accessible :sos: :rotating_light:**
-
+**:sos: NOTE: This app is decomissioned since the TopShot Marketplace API is no longer publically accessible :sos:**
 --- 
-<br />
 <br />
 
 # Flutter TopShot
