@@ -6,6 +6,11 @@
 
 A flutter app to view TopShot listings and explore the marketplace
 
+## Demo
+
+https://user-images.githubusercontent.com/29706203/114898416-1f3bf880-9e23-11eb-9eb1-820cd5f31154.mp4
+
+
 ## Screenshots
 
 <p float="left">
