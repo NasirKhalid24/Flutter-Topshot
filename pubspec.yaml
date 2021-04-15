@@ -1,0 +1,139 @@
+name: topshot_scan
+description: A flutter app to explore the NBA Topshot Marketplace and your Portfolio.
+
+# The following line prevents the package from being accidentally published to
+# pub.dev using `pub publish`. This is preferred for private packages.
+publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+
+# The following defines the version and build number for your application.
+# A version number is three numbers separated by dots, like 1.2.43
+# followed by an optional build number separated by a +.
+# Both the version and the builder number may be overridden in flutter
+# build by specifying --build-name and --build-number, respectively.
+# In Android, build-name is used as versionName while build-number used as versionCode.
+# Read more about Android versioning at https://developer.android.com/studio/publish/versioning
+# In iOS, build-name is used as CFBundleShortVersionString while build-number used as CFBundleVersion.
+# Read more about iOS versioning at
+# https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
+version: 1.0.0+1
+
+environment:
+  sdk: '>=2.12.0 <3.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  cupertino_icons: ^1.0.2
+  graphql: ^4.0.0-beta
+  http: ^0.13.0
+  intl: ^0.17.0
+  extended_image: ^4.0.0
+  get:
+  shimmer: ^1.1.2
+  flutter_spinkit: "^4.1.2"
+  material_floating_search_bar: ^0.3.3
+  fl_chart: ^0.30.0
+  ml_linalg: ^13.0.0
+  flutter_svg: ^0.19.3
+  carousel_slider: ^3.0.0
+  video_player: ^2.1.0
+  chewie: ^1.0.0
+  easy_gradient_text: ^1.0.0
+  statistical_dart: ^0.0.1
+  flutter_switch: ^0.2.2
+  url_launcher: ^6.0.3
+  pull_to_refresh: ^1.6.3
+  firebase_core: ^1.0.3
+  firebase_auth: ^1.0.2
+  google_sign_in: ^5.0.1
+  sign_in_with_apple: ^3.0.0
+  cloud_firestore: ^1.0.4
+  firebase_messaging: ^9.1.1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+flutter:
+
+  uses-material-design: true
+
+  # To add assets to your application, add an assets section, like this:
+  assets:
+    - lib/assets/mintedmoment.png
+    - lib/assets/tags/rookieMint.gif
+    - lib/assets/tags/threeStars.gif
+    - lib/assets/tags/rookieYear.gif
+    - lib/assets/tags/topShotDebut.gif
+    - lib/assets/tags/reward.png
+    - lib/assets/team_logos/76ers.svg
+    - lib/assets/team_logos/allstar.svg
+    - lib/assets/team_logos/blazers.svg
+    - lib/assets/team_logos/bucks.svg
+    - lib/assets/team_logos/bulls.svg
+    - lib/assets/team_logos/cavaliers.svg
+    - lib/assets/team_logos/celtics.svg
+    - lib/assets/team_logos/clippers.svg
+    - lib/assets/team_logos/grizzlies.svg
+    - lib/assets/team_logos/hawks.svg
+    - lib/assets/team_logos/heat.svg
+    - lib/assets/team_logos/hornets.svg
+    - lib/assets/team_logos/jazz.svg
+    - lib/assets/team_logos/kings.svg
+    - lib/assets/team_logos/knicks.svg
+    - lib/assets/team_logos/lakers.svg
+    - lib/assets/team_logos/magic.svg
+    - lib/assets/team_logos/mavericks.svg
+    - lib/assets/team_logos/nets.svg
+    - lib/assets/team_logos/nuggets.svg
+    - lib/assets/team_logos/pacers.svg
+    - lib/assets/team_logos/pelicans.svg
+    - lib/assets/team_logos/pistons.svg
+    - lib/assets/team_logos/raptors.svg
+    - lib/assets/team_logos/rockets.svg
+    - lib/assets/team_logos/spurs.svg
+    - lib/assets/team_logos/suns.svg
+    - lib/assets/team_logos/thunder.svg
+    - lib/assets/team_logos/timberwolves.svg
+    - lib/assets/team_logos/warriors.svg
+    - lib/assets/team_logos/wizards.svg
+
+
+  # An image asset can refer to one or more resolution-specific "variants", see
+  # https://flutter.dev/assets-and-images/#resolution-aware.
+
+  # For details regarding adding assets from package dependencies, see
+  # https://flutter.dev/assets-and-images/#from-packages
+
+  # To add custom fonts to your application, add a fonts section here,
+  # in this "flutter" section. Each entry in this list should have a
+  # "family" key with the font family name, and a "fonts" key with a
+  # list giving the asset and other descriptors for the font. For
+  # example:
+  fonts:
+    - family: Varsity
+      fonts:
+        - asset: lib/fonts/varsity.ttf
+          weight: 400
+          
+    - family: Lexend
+      fonts:
+        - asset: lib/fonts/Lexend-Regular.ttf
+          weight: 400
+        - asset: lib/fonts/Lexend-Bold.ttf
+          weight: 700
+        - asset: lib/fonts/Lexend-ExtraBold.ttf
+          weight: 800
+        - asset: lib/fonts/Lexend-Light.ttf
+          weight: 300
+        - asset: lib/fonts/Lexend-Medium.ttf
+          weight: 500
+        - asset: lib/fonts/Lexend-Thin.ttf
+          weight: 100
+        - asset: lib/fonts/Lexend-SemiBold.ttf
+          weight: 600
+    
+  #
+  # For details regarding fonts from package dependencies,
+  # see https://flutter.dev/custom-fonts/#from-packages

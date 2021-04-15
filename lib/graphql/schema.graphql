@@ -1,0 +1,2263 @@
+directive @hasRole(role: Role!) on FIELD_DEFINITION
+
+directive @sumoAuthentication on FIELD_DEFINITION
+
+directive @authenticated on FIELD_DEFINITION
+
+type Activities implements SortableCollection {
+  size: Int
+  data: [Activity!]!
+}
+
+type Activity implements Sortable {
+  id: ID!
+  sortID: SortID
+  subject: ActivitySubject
+  status: ActivityStatus
+  createdAt: Time
+  updatedAt: Time
+  activityType: ActivityType
+  isRead: Boolean
+}
+
+type ActivityFilters {
+  byUnread: Boolean
+  byStatus: [ActivityStatus!]
+  byType: [ActivityType!]
+}
+
+input ActivityFiltersInput {
+  byUnread: Boolean
+  byStatus: [ActivityStatus!]
+  byType: [ActivityType!]
+}
+
+enum ActivitySortType {
+  CREATED_AT_ASC
+  CREATED_AT_DESC
+  UPDATED_AT_ASC
+  UPDATED_AT_DESC
+}
+
+enum ActivityStatus {
+  PENDING
+  SUCCESS
+  FAILED
+}
+
+union ActivitySubject = PurchaseVendorMomentActivity | PurchaseP2PMomentActivity | P2PMomentListingActivity | P2PMomentListingCancellationActivity | P2PMomentListingSoldActivity | PurchasePackActivity | MomentTransferRequestActivity | MomentTransferReceivedActivity
+
+enum ActivityType {
+  PURCHASE_VENDOR_MOMENT
+  P2P_MOMENT_LISTING
+  P2P_MOMENT_LISTING_CANCELLATION
+  P2P_MOMENT_LISTING_SOLD
+  PURCHASE_P2P_MOMENT
+  PURCHASE_PACK
+  MOMENT_TRANSFER_REQUEST
+  MOMENT_TRANSFER_RECEIVED
+}
+
+input AuthenticateInput {
+  code: String!
+  redirectUrl: String
+  source: String
+}
+
+type AuthenticateResponse {
+  idToken: String!
+  refreshToken: String!
+}
+
+type BallerStatusLevel {
+  label: BallerStatusLevelLabel
+  pointThreshold: Int
+}
+
+enum BallerStatusLevelLabel {
+  STREET_BALLER
+  ROOK
+  RISING_STAR
+  VET
+  ELITE
+  ALL_STAR
+}
+
+type BallerStatusLevels {
+  levels: [BallerStatusLevel]
+}
+
+enum BallerStatusMilestoneLabel {
+  BUY_FIRST_PACK
+  COMMON_PACK_PURCHASE
+  RARE_PACK_PURCHASE
+  LEGENDARY_PACK_PURCHASE
+  BUILD_SHOWCASE
+  COLLECT_COMMON_PACK_MOMENTS
+  COLLECT_RARE_PACK_MOMENTS
+  COLLECT_LEGENDARY_PACK_MOMENTS
+  EARLY_ADOPTER
+  CHALLENGE_COMPLETION
+  LIST_FIRST_MOMENT_FOR_SALE
+  SELL_MOMENT
+  COLLECT_FAVORITE_TEAM_MOMENT
+}
+
+enum BallerStatusTaskStatus {
+  ACTIVE
+  COMPLETE
+}
+
+input BaseSearchInput {
+  pagination: PaginationInput!
+}
+
+input CancelMomentSaleInput {
+  orderID: String!
+  redirectURL: String!
+}
+
+type CancelMomentSaleResponse {
+  orderID: String!
+}
+
+input CancelPurchasePackInput {
+  orderID: String!
+}
+
+type CancelPurchasePackResponse {
+  success: Boolean!
+}
+
+enum ChallengeCompletionStateFilter {
+  COMPLETED
+  NOT_COMPLETED
+}
+
+enum ChallengeExpiryStateFilter {
+  ACTIVE
+  EXPIRED
+}
+
+type ChallengeFilters {
+  byUserID: String
+  byChallengeCompletionState: ChallengeCompletionStateFilter
+  byChallengeExpiryState: ChallengeExpiryStateFilter
+}
+
+input ChallengeFiltersInput {
+  byUserID: String
+  byChallengeCompletionState: ChallengeCompletionStateFilter
+  byChallengeExpiryState: ChallengeExpiryStateFilter
+}
+
+type ChallengeProgress {
+  challenge: UserChallenge
+  numTotalSlots: Int
+  numFilledSlots: Int
+}
+
+type ChallengeReward {
+  playID: String
+  setID: String
+}
+
+enum ChallengeRewardStatus {
+  PENDING
+  RECEIVED
+}
+
+type ChallengeSlot {
+  playID: String
+  setID: String
+  filledMomentID: ID
+}
+
+type ChallengesProgress {
+  progress: [ChallengeProgress!]
+}
+
+type ChallengesSearchSummary {
+  filters: ChallengeFilters
+  searchSummary: SearchSummary
+}
+
+type CodexFilters {
+  bySeries: SeriesFilter
+}
+
+input CodexFiltersInput {
+  bySeries: SeriesFilter
+}
+
+type CodexSet {
+  set: Set
+  totalEditionSlots: Int
+  filledEditionSlots: Int
+  uniqueMoments: Int
+  hasChallengeReward: Boolean
+}
+
+type CodexSetWithEditions {
+  codexSet: CodexSet
+  editionSlots: [EditionSlot]
+}
+
+type CompletedUserChallenge {
+  challenge: UserChallenge
+  rewardStatus: ChallengeRewardStatus
+}
+
+type CountSummary {
+  count: Int
+}
+
+input CreateMomentSaleInput {
+  momentID: String!
+  price: Price!
+  momentFlowID: String!
+  redirectURL: String!
+  momentMetaInput: MomentMetaInput
+}
+
+type CreateMomentSaleResponse {
+  orderID: String!
+}
+
+input CreateMomentTransferRequestInput {
+  momentID: String!
+  momentFlowID: String!
+  receiverDapperID: String!
+
+  """
+  This is the page that dapper will redirect back to for the transfer receipt page.
+  """
+  redirectURL: String!
+
+  """The title and image for the Dapper invocation confirmation display."""
+  momentTitle: String!
+  momentImage: String!
+}
+
+type CreateMomentTransferRequestResponse {
+  ID: String!
+  validation: MomentTransferValidationResults!
+}
+
+scalar Cursor
+
+enum CursorDirection {
+  LEFT
+  RIGHT
+}
+
+scalar Date
+
+type DateRangeFilter {
+  start: Time
+  end: Time
+}
+
+input DateRangeFilterInput {
+  start: Time
+  end: Time
+}
+
+input DeleteShowcaseInput {
+  showcaseID: ID!
+}
+
+type DeleteShowcaseResponse {
+  deletedShowcaseID: ID!
+}
+
+type Edition implements Sortable & Syncable {
+  id: ID!
+  set: Set
+  play: Play
+  assetPathPrefix: String
+  sortID: SortID
+  version: Version
+  circulationCount: Int
+  flowRetired: Boolean
+  state: EditionState
+  tags: [Tag]
+  challengeID: ID
+}
+
+input EditionFilterInput {
+  bySetIDs: [ID]
+}
+
+type EditionFilters {
+  bySetIDs: [ID]
+}
+
+type Editions implements SortableCollection {
+  size: Int
+  data: [Edition!]!
+}
+
+type EditionsFilter {
+  setID: ID!
+  playID: ID!
+}
+
+input EditionsFilterInput {
+  setID: ID!
+  playID: ID!
+}
+
+type EditionSlot {
+  edition: Edition
+  filledMomentIDs: [String]
+}
+
+enum EditionState {
+  HIDDEN
+  VISIBLE
+  CHALLENGE_REWARD_UNRELEASED
+  CHALLENGE_REWARD_RELEASED
+  CHALLENGE_REWARD_COMING_SOON
+}
+
+input ExchangeRefreshTokenInput {
+  refreshToken: String!
+}
+
+type ExchangeRefreshTokenResponse {
+  idToken: String!
+  newRefreshToken: String!
+}
+
+enum ForSaleFilter {
+  FOR_SALE
+  NOT_FOR_SALE
+}
+
+type GetActiveChallengesResponse {
+  challenges: [UserChallenge!]
+}
+
+type GetActivityResponse {
+  data: Activity
+}
+
+input GetCodexInput {
+  userID: ID
+  filters: CodexFiltersInput
+}
+
+type GetCodexResponse {
+  codex: [CodexSet]
+  totalUserOwnedMoments: Int
+  numSetsInProgress: Int
+  numSetsCompleted: Int
+  totalUniqueEditionsOwned: Int
+  filters: CodexFilters
+}
+
+input GetCodexSetInput {
+  setID: ID!
+  userID: ID
+}
+
+type GetCodexSetResponse {
+  codexSetWithEditions: CodexSetWithEditions
+}
+
+input GetEditionInput {
+  setID: ID!
+  playID: ID!
+}
+
+type GetEditionResponse {
+  edition: Edition
+}
+
+input GetMarketplaceTransactionEditionStatsInput {
+  edition: EditionsFilterInput!
+  serialNumber: Int
+}
+
+type GetMarketplaceTransactionEditionStatsResponse {
+  editionStats: MarketplaceTransactionEditionStats
+}
+
+input GetMintedMomentsInput {
+  momentIds: [ID!]!
+}
+
+type GetMintedMomentsResponse {
+  data: [MintedMoment]
+}
+
+input GetMomentTransferRequestInput {
+  ID: String!
+}
+
+type GetMomentTransferRequestResponse {
+  data: MomentTransferRequest
+}
+
+type GetMyActiveChallengesResponse {
+  challenges: [UserChallenge!]
+}
+
+type GetMyCompletedChallengesResponse {
+  completedUserChallenges: [CompletedUserChallenge!]
+}
+
+type GetMyProfileResponse {
+  publicInfo: UserPublicInfo!
+  email: String!
+  segmentId: String
+  moments: [MintedMoment]! @deprecated(reason: "use SearchMintedMoments filter byOwnerDapperID")
+  momentCount: Int!
+}
+
+type GetMyShowcasesResponse {
+  showcases: [Showcase!]
+}
+
+type GetOrderResponse {
+  order: Order
+}
+
+input GetPackListingInput {
+  packListingId: ID!
+}
+
+type GetPackListingResponse {
+  data: PackListing
+}
+
+input GetPacksInput {
+  packIDs: [String!]!
+}
+
+type GetPacksResponse {
+  packs: Packs
+}
+
+input GetPackSummaryBallerStatusInput {
+  userID: ID!
+}
+
+input GetPackSummaryProgressInput {
+  userID: ID!
+  withPacks: [ID!]
+}
+
+type GetPackSummaryProgressResponse {
+  challengesProgress: ChallengesProgress
+  setsProgress: SetsProgress
+}
+
+input GetPlayerDataWithCurrentStatsInput {
+  nbaPlayerID: ID!
+}
+
+type GetPlayerDataWithCurrentStatsResponse {
+  playerData: PlayerData
+  playerSeasonAverageScores: StatsPlayerSeasonAverageScores
+}
+
+input GetPlayInput {
+  playID: ID!
+}
+
+type GetPlayResponse {
+  play: Play
+}
+
+input GetSetInput {
+  setID: ID!
+}
+
+type GetSetResponse {
+  set: Set
+}
+
+type GetSoftCurrencyPriceResponse {
+  price: Int!
+}
+
+input GetTagsInput {
+  byTagLevel: [TagLevel]
+}
+
+type GetTagsResponse {
+  tags: [Tag]!
+}
+
+input GetUserBallerStatusRequest {
+  dapperID: String!
+}
+
+input GetUserCodexInput {
+  userID: ID!
+}
+
+type GetUserCodexResponse {
+  codex: [CodexSet]
+  totalUserOwnedMoments: Int
+}
+
+input GetUserEligibilityForJoiningPackListingQueueInput {
+  dapperID: ID!
+  packListingID: ID!
+}
+
+type GetUserEligibilityForJoiningPackListingQueueResponse {
+  isEligibleToJoin: Boolean!
+}
+
+input GetUserMomentListingsInput {
+  setID: ID!
+  playID: ID!
+}
+
+type GetUserOrdersResponse {
+  orders: Orders
+}
+
+input GetUserP2PListingOrderInput {
+  orderID: String!
+}
+
+type GetUserP2PListingOrderResponse {
+  data: P2PListingOrder
+}
+
+type GetUserP2PListingOrdersResponse {
+  data: P2PListingOrders
+}
+
+input GetUserP2PPurchaseOrderInput {
+  orderID: String!
+}
+
+type GetUserP2PPurchaseOrderResponse {
+  data: P2PPurchaseOrder
+}
+
+type GetUserP2PPurchaseOrdersResponse {
+  data: P2PPurchaseOrders
+}
+
+input GetUserPackOrderInput {
+  orderId: String!
+}
+
+type GetUserPackOrderResponse {
+  data: PackPurchaseOrder
+}
+
+type GetUserPackOrdersResponse {
+  data: PackPurchaseOrders
+}
+
+type GetUserPendingTxStatesResponse {
+  hasPendingPackOpenRequests: Boolean!
+}
+
+input getUserProfileByUsernameInput {
+  username: String!
+}
+
+input GetUserProfileInput {
+  dapperID: ID!
+}
+
+type GetUserProfileResponse {
+  publicInfo: UserPublicInfo!
+  moments: [MintedMoment]! @deprecated(reason: "use SearchMintedMoments filter byOwnerDapperID")
+  momentCount: Int!
+}
+
+type GetUserSettingsResponse {
+  userSettings: UserSettings
+}
+
+input GetUserShowcasesInput {
+  userID: ID!
+}
+
+type GetUserShowcasesResponse {
+  showcases: [Showcase!]
+}
+
+input GetVendorMomentListingInput {
+  setID: ID!
+  playID: ID!
+}
+
+type GetVendorMomentListingResponse {
+  data: VendorMomentListing
+}
+
+input HasBallerStatusProcessedPackFulfillmentsInput {
+  packIDs: [ID!]!
+}
+
+input HasUnreadActivitiesInput {
+  byActivityType: [ActivityType!]
+}
+
+type HasUnreadActivitiesResponse {
+  hasUnreadActivities: Boolean!
+}
+
+type IntegerRangeFilter {
+  min: Int
+  max: Int
+}
+
+input IntegerRangeFilterInput {
+  min: Int
+  max: Int
+}
+
+input MarkActivitiesAsReadInput {
+  activityIDs: [ID!]!
+}
+
+type MarkActivitiesAsReadResponse {
+  ok: Boolean
+}
+
+input MarkAllActivitiesAsReadInput {
+  activitiesBefore: Time!
+}
+
+type MarkAllActivitiesAsReadResponse {
+  ok: Boolean
+}
+
+type MarketplaceTransaction implements Sortable & Syncable {
+  id: ID!
+  version: Version!
+  sortID: SortID!
+  seller: UserPublicInfo!
+  buyer: UserPublicInfo!
+  price: Price!
+  moment: MintedMoment!
+  txHash: String!
+  updatedAt: Time!
+}
+
+type MarketplaceTransactionEditionStats {
+  totalSales: Int
+  mostRecentEditionSale: MostRecentEditionSale
+  averageSalePrice: Price
+  averageSalePriceInSerialNumRange: Price
+  highestSalePrice: Price
+}
+
+type MarketplaceTransactionFilters {
+  byEditions: [EditionsFilter]
+  byMoments: [ID!]
+  byTeams: [ID!]
+}
+
+input MarketplaceTransactionFiltersInput {
+  byEditions: [EditionsFilterInput]
+  byMoments: [ID!]
+  byTeams: [ID!]
+}
+
+type MarketplaceTransactions implements SortableCollection {
+  size: Int
+  data: [MarketplaceTransaction!]!
+}
+
+type MarketplaceTransactionSearchSummary {
+  filters: MarketplaceTransactionFilters
+  sortBy: MarketplaceTransactionSortType
+  searchSummary: SearchSummary
+}
+
+type MarketplaceTransactionSearchSummaryResponse {
+  data: MarketplaceTransactionSearchSummary
+}
+
+enum MarketplaceTransactionSortType {
+  UPDATED_AT_ASC
+  UPDATED_AT_DESC
+  PRICE_ASC
+  PRICE_DESC
+}
+
+type MintedMoment implements Sortable & Syncable {
+  id: ID!
+  version: Version
+  sortID: SortID
+  set: Set
+  play: Play
+  flowId: String
+  flowSerialNumber: String
+  price: Price
+  forSale: Boolean
+  listingOrderID: String
+  owner: User
+  assetPathPrefix: String
+  setPlay: MintedSetPlay
+  createdAt: Time
+  acquiredAt: Time
+  packListingID: String
+  tags: [Tag]!
+}
+
+input MintedMomentFilterInput {
+  byOwnerDapperID: [String]
+  bySets: [ID]
+  bySeries: [ID]
+  byPlays: [ID]
+  byPlayers: [ID]
+  byTeams: [ID]
+  bySetVisuals: [VisualIdType]
+  byForSale: ForSaleFilter
+  byPlayTagIDs: [ID]
+  bySetPlayTagIDs: [ID]
+  byMomentTagIDs: [ID]
+}
+
+type MintedMomentFilters {
+  byOwnerDapperID: [String]
+  bySets: [ID]
+  bySeries: [ID]
+  byPlays: [ID]
+  byPlayers: [ID]
+  byTeams: [ID]
+  bySetVisuals: [VisualIdType]
+  byForSale: ForSaleFilter
+}
+
+type MintedMomentResponse {
+  data: MintedMoment
+}
+
+type MintedMoments implements SortableCollection {
+  size: Int
+  data: [MintedMoment!]!
+}
+
+type MintedMomentSearchSummary {
+  filters: MintedMomentFilters
+  sortBy: MintedMomentSortType
+  searchSummary: SearchSummary
+}
+
+enum MintedMomentSortType {
+  CREATED_AT_ASC
+  CREATED_AT_DESC
+  ACQUIRED_AT_ASC
+  ACQUIRED_AT_DESC
+  RARITY_ASC
+  RARITY_DESC
+  PRICE_USD_ASC
+  PRICE_USD_DESC
+  SERIAL_NUMBER_ASC
+  SERIAL_NUMBER_DESC
+}
+
+type MintedSetPlay {
+  ID: ID!
+  setID: ID!
+  playID: ID!
+  flowRetired: Boolean
+  circulationCount: Int
+  tags: [Tag]
+}
+
+type MomentCountPerTeam {
+  teamID: String
+  momentCount: Int
+}
+
+type MomentListing implements Sortable & Syncable {
+  """The listing id is the unique combination of editionID and listingType"""
+  id: ID!
+  version: Version!
+  sortID: SortID!
+  set: Set
+  play: Play
+  assetPathPrefix: String
+
+  """The number of minted moments for this set/play."""
+  circulationCount: Int @deprecated(reason: "use circulationCount field found inside mintedSetPlay instead")
+
+  """flowRetired indicates whether the set/play has been retired"""
+  flowRetired: Boolean @deprecated(reason: "use flowRetired field found inside mintedSetPlay instead")
+  listingType: MomentListingType!
+
+  """
+  For user listings: The price range for all the moments available for sale for this set/play
+  For vendor listings: The price range min/max will be the same
+  """
+  priceRange: PriceRange!
+
+  """Tags are not implemented"""
+  tags: [Tag]
+
+  """Vendor listing field: whether the listing is available for sale"""
+  forSale: Boolean!
+
+  """
+  Vendor listing field: an admin input value, the previous price for sale display
+  """
+  vendorPreviousPrice: Price
+
+  """
+  Vendor listing field: the vendor moment listing id, used for direct purchase
+  """
+  vendorListingID: ID
+
+  """Count of moments avalible for sale (listings)"""
+  momentListingCount: Int!
+  limit: Int!
+
+  """
+  This field is currently NOT SUPPORTED
+  userOwnedSetPlayCount is an amount of SetPlays owned by the reqesting user
+  """
+  userOwnedSetPlayCount: Int
+
+  """
+  TODO: delete once FE migrated the fixtures: https://github.com/dapperlabs/nba-api/pull/3768/files#r578669841
+  """
+  mintedSetPlay: MintedSetPlay @deprecated(reason: "renamed to setPlay for consistency, this field is left empty")
+
+  """
+  setPlay contains setPlay data including tags, circulation count and a retired flag
+  """
+  setPlay: MintedSetPlay
+}
+
+input MomentListingFilterInput {
+  bySets: [ID]
+  byPlayers: [ID]
+  byTeams: [ID]
+  byPrimaryPlayerPosition: [PlayerPosition]
+  byPrice: PriceRangeFilterInput
+  bySerialNumber: IntegerRangeFilterInput
+  byPower: IntegerRangeFilterInput
+  byGameDate: DateRangeFilterInput
+  byCreatedAt: DateRangeFilterInput
+  byPlayerGameScores: PlayerGameScoresFiltersInput
+  byListingType: [MomentListingType]
+  bySetVisuals: [VisualIdType]
+  byPlayIDs: [ID]
+  bySeries: [ID]
+  byPlayTagIDs: [ID]
+  bySetPlayTagIDs: [ID]
+
+  """Tags are not implemented."""
+  byTagNames: [String]
+}
+
+type MomentListingFilters {
+  bySets: [ID]
+  byPlayers: [ID]
+  byTeams: [ID]
+  byPrimaryPlayerPosition: [PlayerPosition]
+  byPrice: PriceRangeFilter
+  bySerialNumber: IntegerRangeFilter
+  byPower: IntegerRangeFilter
+  byGameDate: DateRangeFilter
+  byCreatedAt: DateRangeFilter
+  byPlayerGameScores: PlayerGameScoresFilters
+  byListingType: [MomentListingType]
+  byTagNames: [String]
+  bySetVisuals: [VisualIdType]
+  byPlayIDs: [ID]
+  bySeries: [ID]
+}
+
+type MomentListings implements SortableCollection {
+  size: Int
+  data: [MomentListing!]!
+}
+
+enum MomentListingSortType {
+  PRICE_USD_ASC
+  PRICE_USD_DESC
+  CREATED_AT_ASC
+  CREATED_AT_DESC
+  UPDATED_AT_ASC
+  UPDATED_AT_DESC
+  GAME_DATE_ASC
+  GAME_DATE_DESC
+  SERIAL_NUMBER_ASC
+  SERIAL_NUMBER_DESC
+}
+
+type MomentListingsSearchSummary {
+  filters: MomentListingFilters
+  sortBy: MomentListingSortType
+  searchSummary: SearchSummary
+}
+
+type MomentListingsSearchSummaryResponse {
+  data: MomentListingsSearchSummary
+}
+
+enum MomentListingType {
+  BY_VENDOR
+  BY_USERS
+}
+
+input MomentMetaInput {
+  momentTitle: String!
+  momentDescription: String
+  momentImageURL: String!
+}
+
+type MomentsFromPack {
+  packID: String!
+  momentIDs: [String!]
+}
+
+type MomentTransferReceivedActivity {
+  transfer: MomentTransferRequest
+}
+
+type MomentTransferRequest {
+  id: ID!
+  senderDapperID: String
+  receiverDapperID: String
+  status: MomentTransferRequestStatus
+  state: MomentTransferRequestState
+  momentID: String
+  version: Int!
+  invocationIntentID: String
+  redirectURL: String
+  momentImage: String
+  momentTitle: String
+  createdAt: Time
+  updatedAt: Time
+  moment: MintedMoment
+  txHash: String
+}
+
+type MomentTransferRequestActivity {
+  transfer: MomentTransferRequest
+}
+
+enum MomentTransferRequestState {
+  CREATED
+  REQUEST_VALIDATED
+  INVOCATION_INTENT_CREATED
+  INVOCATION_SUBMITTED
+  SUCCEEDED
+  REQUEST_VALIDATION_FAILED
+  FAILED
+}
+
+enum MomentTransferRequestStatus {
+  PROCESSING
+  FAILED
+  SUCCEEDED
+}
+
+enum MomentTransferValidationResults {
+  VALIDATION_RESULTS_OK
+  VALIDATION_RESULTS_ERROR
+  VALIDATION_RESULTS_MOMENT_LOCKED
+  VALIDATION_RESULTS_ACCOUNT_AGE
+}
+
+type MostRecentEditionSale {
+  price: Price
+  serialNumber: Int
+}
+
+type Mutation {
+  NoOp: Boolean
+  markActivitiesAsRead(input: MarkActivitiesAsReadInput!): MarkActivitiesAsReadResponse
+  markAllActivitiesAsRead(input: MarkAllActivitiesAsReadInput!): MarkAllActivitiesAsReadResponse
+  purchaseMomentWithSoftCurrency(input: PurchaseMomentWithSoftCurrencyInput!): PurchaseMomentWithSoftCurrencyResponse
+  purchaseAssetsWithDapperPayment(input: PurchaseAssetsWithDapperPaymentInput!): PurchaseAssetsWithDapperPaymentResponse
+  createMomentTransferRequest(input: CreateMomentTransferRequestInput!): CreateMomentTransferRequestResponse
+  createMomentSale(input: CreateMomentSaleInput!): CreateMomentSaleResponse
+  cancelMomentSale(input: CancelMomentSaleInput!): CancelMomentSaleResponse
+  purchaseP2PMoment(input: PurchaseP2PMomentInput!): PurchaseP2PMomentResponse
+  transferPacks(input: TransferPacksInput!): TransferPacksResponse
+  purchasePack(input: PurchasePackInput!): PurchasePackResponse
+  cancelPurchasePack(input: CancelPurchasePackInput!): CancelPurchasePackResponse
+  openPacks(input: OpenPacksInput!): OpenPacksResponse
+  openPacksV2(input: OpenPacksV2Input!): OpenPacksV2Response
+  purchaseVendorMoment(input: PurchaseVendorMomentInput!): PurchaseVendorMomentResponse
+  saveShowcase(input: SaveShowcaseInput!): SaveShowcaseResponse
+  deleteShowcase(input: DeleteShowcaseInput!): DeleteShowcaseResponse
+  upsertUserProfile(input: UpsertUserProfileInput!): UpsertUserProfileResponse!
+  patchUserPreferences(input: PatchUserPreferencesInput!): PatchUserPreferencesResponse!
+  UpdateUserSettings(input: UserSettingsUpdateInput!): UpdateUserSettingsResponse
+}
+
+type NotificationSettings {
+  receiveEmails: Boolean!
+}
+
+input NotificationSettingsInput {
+  receiveEmails: Boolean!
+}
+
+input OpenPacksInput {
+  packIDs: [String!]!
+}
+
+type OpenPacksResponse {
+  success: Boolean!
+  ID: String!
+}
+
+input OpenPacksV2Input {
+  packIDs: [String!]!
+}
+
+type OpenPacksV2Response {
+  momentsFromPacks: [MomentsFromPack!]
+}
+
+type Order {
+  id: ID!
+  status: OrderStatus!
+  state: OrderState!
+  momentListingID: ID!
+  playID: ID!
+  setID: ID!
+  userID: ID!
+  moment: MintedMoment
+  price: Price
+  createdAt: Time
+  updatedAt: Time
+  dapperIntentID: String
+}
+
+type Orders {
+  size: Int
+  data: [Order!]!
+}
+
+enum OrderState {
+  CREATED
+  PURCHASE_INTENT_CREATED
+  PROCESSING_RESERVATION
+  MOMENT_RESERVED
+  VALIDATING_MOMENT
+  MOMENT_VALIDATED
+  MOMENT_UNAVAILABLE
+  PAYMENT_FAILED
+  PAYMENT_SUCCEEDED
+  PROCESSING_MINTING
+  MINTING_SUCCEEDED
+  MINTING_FAILED
+  PROCESSING_TRANSFER
+  TRANSFER_SUCCEEDED
+  TRANSFER_FAILED
+  PROCESSING_PAYMENT
+}
+
+enum OrderStatus {
+  SUBMITTED
+  PROCESSING
+  FAILED
+  COMPLETED
+}
+
+type P2PListingOrder {
+  id: ID!
+  price: Price!
+  status: P2PListingOrderStatus!
+  state: P2PListingOrderState!
+  version: Int!
+  moment: MintedMoment
+  seller: User
+  createdAt: Time
+  updatedAt: Time
+  listingInvocationIntentID: String
+  delistingInvocationIntentID: String
+  listingTxHash: String
+  delistingTxHash: String
+}
+
+type P2PListingOrders {
+  size: Int
+  data: [P2PListingOrder!]!
+}
+
+enum P2PListingOrderState {
+  NIL
+  CREATED
+  OWNERSHIP_VERIFIED
+  LISTING_INVOCATION_INTENT_CREATED
+  LISTING_INVOCATION_SUBMITTED
+  LISTING_SUCCEEDED
+  LISTING_CANCELLED
+  MOMENT_SOLD
+  DELISTING_REQUESTED
+  DELISTING_INVOCATION_INTENT_CREATED
+  DELISTING_INVOCATION_SUBMITTED
+  DELISTING_SUCCEEDED
+  DELISTING_FAILED
+  OWNERSHIP_VERIFICATION_FAILED
+  LISTING_FAILED
+}
+
+enum P2PListingOrderStatus {
+  NIL
+  PROCESSING
+  FAILED
+  LISTED
+  DELISTED
+  SOLD
+}
+
+type P2PMomentListingActivity {
+  order: P2PListingOrder
+}
+
+type P2PMomentListingCancellationActivity {
+  order: P2PListingOrder
+}
+
+type P2PMomentListingSoldActivity {
+  order: P2PListingOrder
+}
+
+type P2PPurchaseOrder {
+  id: ID!
+  price: Price!
+  status: P2PPurchaseOrderStatus!
+  state: P2PPurchaseOrderState!
+  version: Int!
+  moment: MintedMoment
+  createdAt: Time
+  updatedAt: Time
+  purchaseIntentID: String
+  buyer: User
+  failureReason: P2PPurchaseOrderFailureReason
+  txHash: String
+}
+
+enum P2PPurchaseOrderFailureReason {
+  MOMENT_NO_LONGER_AVAILABLE
+}
+
+type P2PPurchaseOrders {
+  size: Int
+  data: [P2PPurchaseOrder!]!
+}
+
+enum P2PPurchaseOrderState {
+  CREATED
+  USERS_VERIFIED
+  CREATE_INTENT_SUCCEEDED
+  PAYMENT_SUBMITTED
+  PAYMENT_SUCCEEDED
+  PURCHASE_SUCCEEDED
+  USER_VERIFICATION_FAILED
+  PAYMENT_FAILED
+  MOMENT_UNAVAILABLE
+  PURCHASE_FAILED
+}
+
+enum P2PPurchaseOrderStatus {
+  PROCESSING
+  FAILED
+  SUCCEEDED
+}
+
+type Pack implements Sortable & Syncable {
+  id: ID!
+  state: PackState
+  status: PackStatus
+
+  """momentIds are only available on opened packs"""
+  momentIds: [ID]
+  sortID: SortID
+  version: Version
+  createdAt: Time
+  updatedAt: Time
+  packListing: PackListing @deprecated(reason: "Use `packListingID` instead.")
+  packListingID: ID
+  fulfillmentTxHash: String
+  preorder: Boolean
+}
+
+type PackFilters {
+  byOwnerDapperID: String
+}
+
+input PackFiltersInput {
+  byOwnerDapperID: String
+}
+
+type PackListing implements Sortable & Syncable {
+  id: ID!
+  remaining: Int
+  title: String
+  description: String
+  price: Price
+  expiryDate: Time
+  forSale: Boolean
+  images: [PackListingImage]
+  sortID: SortID
+  version: Version
+  packListingTemplate: PackListingTemplate
+  totalPackCount: Int
+
+  """visualId is the highest visualId of the sets in a packlisting template"""
+  visualId: VisualIdType
+  startDate: Time
+  momentCountPerTeam: [MomentCountPerTeam]
+  waitingRoom: String
+  maxOrderQuantity: Int
+  orderPurchaseCoolDownTimeInMinutes: Int
+  preorder: Boolean
+}
+
+type PackListingImage {
+  type: PackListingImageType
+  url: String
+}
+
+enum PackListingImageType {
+  DEFAULT
+  BACKGROUND
+}
+
+type PackListings implements SortableCollection {
+  size: Int
+  data: [PackListing!]!
+}
+
+type PackListingSlot {
+  set: Set
+  playIDCountMap: [PlayIDCountTuple]
+}
+
+type PackListingsSearchSummary {
+  searchSummary: SearchSummary
+}
+
+type PackListingTemplate {
+  packListingSlots: [PackListingSlot]
+}
+
+enum PackOrderState {
+  NIL
+  CREATED
+  RESERVATION_SUCCEEDED
+  RESERVATION_FAILED
+  RESERVATION_TIMEOUT
+  CREATE_INTENT_SUCCEEDED
+  CREATE_INTENT_FAILED
+  PAYMENT_SUCCEEDED
+  PAYMENT_FAILED
+  CANCEL_RESERVATION_REQUESTED
+  RESERVATION_CANCELLED
+  PAYMENT_CANCELLATION_REQUESTED
+  PAYMENT_CANCELLATION_SUCCEEDED
+  INTENT_CANCELLATION_REQUESTED
+  INTENT_CANCELLATION_SUCCEEDED
+  INTENT_CANCELLATION_FAILED
+  INTENT_EXPIRED
+
+  """
+  fulfillment related states are deprecated. Fulfillments happen when packs are opened.
+  """
+  FULFILLMENT_SUCCEEDED
+  FULFILLMENT_FAILED
+  FULFILLMENT_REQUESTED
+  FULFILLMENT_TIMEOUT
+  FULFILLMENT_EXPIRED
+}
+
+enum PackOrderStatus {
+  NIL
+  SUBMITTED
+  PROCESSING
+  FAILED
+  COMPLETED
+}
+
+type PackPurchaseOrder {
+  id: ID!
+  price: Price!
+  status: PackOrderStatus!
+  state: PackOrderState!
+  paymentTxHash: String
+  packListing: PackListing
+  quantity: Int
+
+  """
+  The packs in the order will be revealed as soon as payment is successful.
+  There are a few scenarios:
+  
+  1) Payment Succeeded:
+  Pack with momentIds returned and fulfillment is in processing.
+  The moments will NOT show up with searchMintedMoments query filter byOwnerDapperID.
+  
+  PackOrderState : PAYMENT_SUCCEEDED
+  PackOrderStatus : PROCESSING
+  
+  2) Fulfillment is Completed:
+  Pack with momentIds returned, order is completed.
+  The moments will eventually show up with searchMintedMoments query filter byOwnerDapperID.
+  Note: Moment ownership updates may still be happening when fulfillment is
+  complete, so the moments will not be returned by searchMintedMoments query
+  filter byOwnerDapperID right away.
+  
+  PackOrderState : FULFILLMENT_SUCCEEDED
+  PackOrderStatus : COMPLETED
+  
+  3) Fulfillment Failed:
+  Pack with moment_ids returned for failed fulfillment (failed moment transfer to user).
+  The moments will not show up with searchMintedMoments query filter byOwnerDapperID.
+  
+  state : FULLFILLMENT_FAILED
+  status : FAILED
+  """
+  packs: [Pack]
+  dapperIntentId: String
+  createdAt: Time
+  updatedAt: Time
+}
+
+type PackPurchaseOrders {
+  size: Int
+  data: [PackPurchaseOrder!]!
+}
+
+type Packs {
+  size: Int
+  data: [Pack!]!
+}
+
+type PackSearchSummary {
+  searchSummary: SearchSummary
+}
+
+input PacksFiltersInput {
+  byOwnerDapperID: String
+}
+
+type PacksForUserCollection implements Sortable & Syncable {
+  id: ID!
+  title: String
+  description: String
+  images: [PackListingImage]
+  sortID: SortID
+  version: Version
+  data: Packs
+
+  """visualId is the highest visualId of the sets in a packlisting template"""
+  visualId: VisualIdType
+}
+
+type PacksForUserCollections implements SortableCollection {
+  size: Int
+  data: [PacksForUserCollection!]!
+}
+
+type PacksForUserCollectionSearchSummary {
+  filters: PackFilters
+  searchSummary: SearchSummary
+}
+
+type PacksForUserCollectionSearchSummaryResponse {
+  data: PacksForUserCollectionSearchSummary
+}
+
+"""
+Key states:
+
+OPEN_PACK_SUCCEEDED:    It means this is ready to show moments to users, and moments fulfillment will start soon.
+OPEN_PACK_FAILED:       Open pack is initiated, but failed before fulfilling
+moments. It is not ready to show moments to users.
+FULFILL_PACK_REQUESTED: It means moments fulfillment started.
+on-chain.
+FULFILL_PACK_FAILED:    All moments or part of the moments fulfillment failed.
+FULFILL_PACK_SUCCEEDED: All moments are fulfilled successfully.
+
+Other states:
+
+FULFILL_PACK_TIMEOUT & FULFILL_PACK_EXPIRED: Since moment fulfillment consists of multiple on-chain transactions, these
+transactions are probably timeout or expired. But these two states are not used at the moment. Timeout on-chain
+transactions or expired transactions are treated as failed.
+"""
+enum PackState {
+  SEALED
+  OPEN_PACK_REQUESTED
+  OPEN_PACK_FAILED
+  OPEN_PACK_SUCCEEDED
+  FULFILL_PACK_REQUESTED
+  FULFILL_PACK_TIMEOUT
+  FULFILL_PACK_EXPIRED
+  FULFILL_PACK_FAILED
+  FULFILL_PACK_SUCCEEDED
+}
+
+"""
+SEALED:    When a pack is at sealed status, moments of the pack will not be revealed.
+OPENED:    When a pack is at opened status, moments of the pack will be returned, but on-chain transfer of the moments
+are not finished yet.
+FULFILLED: When a pack is at fulfilled status, it means all moments of the pack are transferred to the user's wallet
+on-chain.
+"""
+enum PackStatus {
+  SEALED
+  OPENED
+  FULFILLED
+}
+
+type Pagination {
+  leftCursor: Cursor
+  rightCursor: Cursor
+}
+
+input PaginationInput {
+  cursor: Cursor!
+  direction: CursorDirection!
+  limit: Int!
+}
+
+input PatchUserPreferencesInput {
+  favoriteTeamID: String
+}
+
+type PatchUserPreferencesResponse {
+  success: Boolean! @deprecated(reason: "use publicInfo")
+  publicInfo: UserPublicInfo!
+}
+
+type Play implements Sortable & Syncable {
+  id: ID!
+  version: Version
+  description: String
+  flowID: ID
+  sortID: SortID
+  status: PlayStatus
+  assets: PlayAssets
+  stats: PlayStats
+  statsPlayerGameScores: StatsPlayerGameScores
+  statsPlayerSeasonAverageScores: StatsPlayerSeasonAverageScores
+  tags: [Tag]!
+}
+
+type PlayAssets {
+  videos: [PlayVideo]
+  images: [PlayImage]
+  videoLengthInMilliseconds: Int @deprecated(reason: "video length is now associated with PlayVideo")
+}
+
+type Player {
+  id: ID!
+  name: String
+}
+
+type PlayerData {
+  jerseyNumber: String
+  position: String
+  height: Int
+  weight: Int
+  currentTeamName: String
+  currentTeamId: String
+  firstName: String
+  lastName: String
+  birthplace: String
+  birthdate: Date
+  yearsExperience: Int
+  teamsPlayedFor: [String]
+}
+
+type PlayerGameScoresFilters {
+  points: IntegerRangeFilter
+}
+
+input PlayerGameScoresFiltersInput {
+  points: IntegerRangeFilterInput!
+}
+
+enum PlayerPosition {
+  NA
+  C
+  CF
+  F
+  FC
+  FG
+  G
+  GF
+  PF
+  PG
+  SF
+  SG
+}
+
+type Players {
+  size: Int
+  data: [Player!]!
+}
+
+type PlayIDCountTuple {
+  id: String!
+  count: Int!
+}
+
+type PlayImage {
+  type: PlayImageType!
+  url: String!
+}
+
+enum PlayImageType {
+  PLAY_IMAGE_TYPE_NIL
+  PLAY_IMAGE_TYPE_PLAYER
+}
+
+type Plays implements SortableCollection {
+  size: Int
+  data: [Play!]!
+}
+
+type PlaySearchSummary {
+  sortBy: PlaySortType
+  searchSummary: SearchSummary
+}
+
+enum PlaySortType {
+  CREATED_AT_ASC
+  CREATED_AT_DESC
+  UPDATED_AT_ASC
+  UPDATED_AT_DESC
+}
+
+type PlayStats {
+  playerID: String
+  playerName: String
+  firstName: String
+  lastName: String
+  jerseyNumber: String
+  teamAtMoment: String
+  awayTeamName: String
+  awayTeamScore: Int
+  homeTeamName: String
+  homeTeamScore: Int
+  dateOfMoment: Time
+  totalYearsExperience: String
+  teamAtMomentNbaId: String
+  height: Int
+  weight: Int
+  currentTeam: String
+  currentTeamId: String
+  primaryPosition: PlayerPosition
+  homeTeamNbaId: String
+  awayTeamNbaId: String
+  nbaSeason: String
+  draftYear: Int
+  draftSelection: String
+  draftRound: String
+  birthplace: String
+  birthdate: Date
+  draftTeam: String
+  draftTeamNbaId: String
+  playCategory: String
+  playType: String
+  quarter: Quarter
+  homeTeamScoresByQuarter: TeamScoresByQuarter
+  awayTeamScoresByQuarter: TeamScoresByQuarter
+}
+
+enum PlayStatus {
+  RECEIVED
+  DRAFT
+  REVIEW
+  APPROVED
+  REJECTED
+}
+
+type PlayVideo {
+  type: PlayVideoType
+  url: URL
+  videoLength: Int
+}
+
+enum PlayVideoType {
+  PLAY_VIDEO_TYPE_VERTICAL
+  PLAY_VIDEO_TYPE_SQUARE
+}
+
+scalar Price
+
+type PriceRange {
+  min: Price!
+  max: Price!
+}
+
+type PriceRangeFilter {
+  min: Price
+  max: Price
+}
+
+input PriceRangeFilterInput {
+  min: Price
+  max: Price
+}
+
+input PurchaseAssetsWithDapperPaymentInput {
+  orderToken: String!
+}
+
+type PurchaseAssetsWithDapperPaymentResponse {
+  assetID: ID!
+  price: Int!
+  purchaseType: PurchaseType!
+}
+
+input PurchaseMomentWithSoftCurrencyInput {
+  momentID: String!
+}
+
+type PurchaseMomentWithSoftCurrencyResponse {
+  momentID: String!
+}
+
+type PurchaseP2PMomentActivity {
+  order: P2PPurchaseOrder
+}
+
+input PurchaseP2PMomentInput {
+  momentID: String!
+  price: Price!
+  momentFlowID: String!
+  sellerID: String!
+  redirectURL: String!
+  momentName: String
+  momentDescription: String
+  momentImageURL: String
+  momentMetaInput: MomentMetaInput
+  recaptchaToken: String
+}
+
+type PurchaseP2PMomentResponse {
+  orderID: String!
+}
+
+type PurchasePackActivity {
+  order: PackPurchaseOrder
+}
+
+input PurchasePackInput {
+  packListingID: String!
+  price: Price!
+  quantity: Int!
+  redirectURL: String!
+  recaptchaToken: String
+  queueID: String
+}
+
+type PurchasePackResponse {
+  orderID: String!
+  existingReservation: Boolean
+  packsReserved: Int
+}
+
+input PurchaseSoftCurrencyWithDapperPaymentInput {
+  orderToken: String!
+}
+
+type PurchaseSoftCurrencyWithDapperPaymentResponse {
+  success: Boolean!
+}
+
+enum PurchaseType {
+  SOFT_CURRENCY_PURCHASE
+  BASIC_MOMENT_PURCHASE
+  NFT_MOMENT_PURCHASE
+}
+
+type PurchaseVendorMomentActivity {
+  order: Order
+}
+
+input PurchaseVendorMomentInput {
+  orderToken: String
+  purchaserID: String
+  paymentTransactionID: String
+  momentListingID: String!
+  redirectURL: String!
+  price: Price
+  momentTitle: String
+  momentImageURL: String
+}
+
+type PurchaseVendorMomentResponse {
+  orderID: ID!
+  paymentTransactionID: String @deprecated(reason: "no longer given")
+}
+
+enum Quarter {
+  NA
+  Q1
+  Q2
+  Q3
+  Q4
+  OT1
+  OT2
+  OT3
+  OT4
+  OT5
+  OT6
+  OT7
+  OT8
+  OT9
+  OT10
+}
+
+type QuarterScore {
+  type: String
+  number: Int
+  sequence: Int
+  points: Int
+}
+
+type Query {
+  batchFetchSyncable(ids: [ID]): [Syncable]
+  getPlay(playID: GetPlayInput!): GetPlayResponse
+  GetActivity(activityID: ID!): GetActivityResponse
+  SearchActivity(input: SearchActivityInput!): SearchActivityResponse
+  HasUnreadActivities(input: HasUnreadActivitiesInput!): HasUnreadActivitiesResponse
+  getUserBallerStatus(input: GetUserBallerStatusRequest!): UserBallerStatus
+  getBallerStatusLevels: BallerStatusLevels
+  hasBallerStatusProcessedPackFulfillments(input: HasBallerStatusProcessedPackFulfillmentsInput!): Boolean
+  getMyActiveChallenges: GetMyActiveChallengesResponse!
+  getMyCompletedChallenges: GetMyCompletedChallengesResponse!
+  getActiveChallenges: GetActiveChallengesResponse!
+  searchChallenges(input: SearchChallengesInput!): SearchChallengesResponse
+  getUserCodex(input: GetUserCodexInput!): GetUserCodexResponse @deprecated(reason: "use getCodex instead (with optional userID)")
+  getCodex(input: GetCodexInput!): GetCodexResponse
+  getCodexSet(input: GetCodexSetInput!): GetCodexSetResponse
+  authenticate(input: AuthenticateInput!): AuthenticateResponse
+  requestLoginUrl(input: RequestLoginUrlInput!): RequestLoginUrlResponse
+  exchangeRefreshToken(input: ExchangeRefreshTokenInput!): ExchangeRefreshTokenResponse
+  revokeToken(input: RevokeTokenInput!): RevokeTokenResponse
+  searchMarketplaceTransactions(input: SearchMarketplaceTransactionsInput!): MarketplaceTransactionSearchSummaryResponse
+  getMarketplaceTransactionEditionStats(input: GetMarketplaceTransactionEditionStatsInput!): GetMarketplaceTransactionEditionStatsResponse
+  searchMintedMoments(input: SearchMintedMomentsInput!): SearchMintedMomentsResponse
+  getMintedMoment(momentId: ID!): MintedMomentResponse
+  getMintedMoments(input: GetMintedMomentsInput!): GetMintedMomentsResponse
+  allPlayers: Players
+
+  """
+  Search suggestions returns all players whose name contain the string given in the input field.
+  For example: "Lebron James", "bron J", and "James" would return Lebron James. However, "Lbron" would not.
+  """
+  getSearchSuggestions(input: SearchSuggestionsInput!): SearchSuggestions
+  getSoftCurrencyPrice: GetSoftCurrencyPriceResponse
+  allTeams: Teams
+  getEdition(input: GetEditionInput!): GetEditionResponse
+  searchEditions(input: SearchEditionsInput!): SearchEditionsResponse
+  searchMomentListings(input: SearchMomentListingsInput!): MomentListingsSearchSummaryResponse
+  getUserMomentListings(input: GetUserMomentListingsInput!): UserMomentListingsResponse
+  getVendorMomentListing(input: GetVendorMomentListingInput!): GetVendorMomentListingResponse
+  getMomentTransferRequest(input: GetMomentTransferRequestInput!): GetMomentTransferRequestResponse
+  getUserP2PListingOrder(input: GetUserP2PListingOrderInput): GetUserP2PListingOrderResponse
+  getUserP2PListingOrders: GetUserP2PListingOrdersResponse
+  getUserP2PPurchaseOrder(input: GetUserP2PPurchaseOrderInput): GetUserP2PPurchaseOrderResponse
+  getUserP2PPurchaseOrders: GetUserP2PPurchaseOrdersResponse
+
+  """
+  note: searchPackListings currently does not currently do any limit/pagination/filters/sorts.
+  """
+  searchPackListings(input: SearchPackListingsInput!): SearchPackListingsResponse
+  getPackListing(input: GetPackListingInput!): GetPackListingResponse
+  getUserPackOrder(input: GetUserPackOrderInput): GetUserPackOrderResponse
+  getUserPackOrders: GetUserPackOrdersResponse
+  getPackSummaryProgress(input: GetPackSummaryProgressInput!): GetPackSummaryProgressResponse
+  getPackSummaryBallerStatus(input: GetPackSummaryBallerStatusInput!): UserBallerStatus
+  getPacks(input: GetPacksInput!): GetPacksResponse
+
+  """
+  Not yet implemented. searchPacks currently does not currently support limit/pagination/sorts.
+  """
+  searchPacks(input: SearchPacksInput!): SearchPacksResponse
+  searchPacksForUserCollection(input: SearchPacksForUserCollectionInput!): PacksForUserCollectionSearchSummaryResponse
+  getPlayerDataWithCurrentStats(input: GetPlayerDataWithCurrentStatsInput): GetPlayerDataWithCurrentStatsResponse
+  searchPlays(input: SearchPlaysInput!): PlaySearchSummary
+  getOrder(orderID: ID!): GetOrderResponse
+  getUserOrders: GetUserOrdersResponse
+  searchSets(input: SearchSetsInput!): SearchSetsResponse
+  getSet(input: GetSetInput!): GetSetResponse
+  getShowcaseByID(showcaseID: ID!): Showcase
+  getUserShowcases(input: GetUserShowcasesInput!): GetUserShowcasesResponse
+  getMyShowcases: GetMyShowcasesResponse
+  getTags(input: GetTagsInput!): GetTagsResponse
+  getUserProfile(input: GetUserProfileInput!): GetUserProfileResponse!
+  getMyProfile: GetMyProfileResponse!
+  getUserProfileByUsername(input: getUserProfileByUsernameInput!): GetUserProfileResponse!
+  getUserPendingTxStates: GetUserPendingTxStatesResponse!
+  getUserEligibilityForJoiningPackListingQueue(input: GetUserEligibilityForJoiningPackListingQueueInput!): GetUserEligibilityForJoiningPackListingQueueResponse!
+  GetUserSettings: GetUserSettingsResponse
+}
+
+input RequestLoginUrlInput {
+  state: String
+  redirectUrl: String
+  loginHint: String
+}
+
+type RequestLoginUrlResponse {
+  url: String!
+}
+
+input RevokeTokenInput {
+  refreshToken: String!
+}
+
+type RevokeTokenResponse {
+  success: Boolean!
+}
+
+enum Role {
+  SUPER_ADMIN
+  CREATOR_ADMIN
+  MARKETPLACE_ADMIN
+  REVIEWER_ADMIN
+}
+
+input SaveShowcaseInput {
+  showcaseID: ID
+  momentIDs: [ID!]
+  name: String
+}
+
+type SaveShowcaseResponse {
+  showcaseID: ID!
+}
+
+input SearchActivityInput {
+  filters: ActivityFiltersInput!
+  sortBy: ActivitySortType
+  searchInput: BaseSearchInput!
+}
+
+type SearchActivityResponse {
+  filters: ActivityFilters
+  sortBy: ActivitySortType
+  searchSummary: SearchSummary
+}
+
+input SearchChallengesInput {
+  filters: ChallengeFiltersInput
+  searchInput: BaseSearchInput!
+}
+
+type SearchChallengesResponse {
+  data: ChallengesSearchSummary
+}
+
+input SearchEditionsInput {
+  filters: EditionFilterInput!
+}
+
+type SearchEditionsResponse {
+  filters: EditionFilters
+  searchSummary: SearchSummary
+}
+
+input SearchMarketplaceTransactionsInput {
+  filters: MarketplaceTransactionFiltersInput
+  sortBy: MarketplaceTransactionSortType
+  searchInput: BaseSearchInput!
+}
+
+input SearchMintedMomentsInput {
+  filters: MintedMomentFilterInput
+  sortBy: MintedMomentSortType
+  searchInput: BaseSearchInput!
+}
+
+type SearchMintedMomentsResponse {
+  data: MintedMomentSearchSummary
+}
+
+input SearchMomentListingsInput {
+  filters: MomentListingFilterInput!
+  sortBy: MomentListingSortType
+  searchInput: BaseSearchInput!
+  userDapperID: ID
+}
+
+input SearchPackListingsInput {
+  searchInput: BaseSearchInput!
+}
+
+type SearchPackListingsResponse {
+  data: PackListingsSearchSummary
+}
+
+input SearchPacksForUserCollectionInput {
+  searchInput: BaseSearchInput!
+  filters: PacksFiltersInput
+}
+
+input SearchPacksInput {
+  searchInput: BaseSearchInput!
+  filters: PackFiltersInput
+}
+
+type SearchPacksResponse {
+  data: PackSearchSummary
+}
+
+input SearchPlaysInput {
+  sortBy: PlaySortType
+  searchInput: BaseSearchInput!
+}
+
+input SearchSetsInput {
+  searchInput: BaseSearchInput
+}
+
+type SearchSetsResponse {
+  searchSummary: SearchSummary
+}
+
+type SearchSuggestions {
+  playerSuggestions: [Player]
+}
+
+input SearchSuggestionsInput {
+  input: String!
+}
+
+type SearchSummary {
+  count: CountSummary
+  pagination: Pagination
+  data: SortableCollection
+}
+
+enum SeriesFilter {
+  SERIES_1
+  SERIES_2
+}
+
+type Set implements Sortable & Syncable {
+  id: ID!
+  sortID: SortID
+  version: Version
+  flowId: Int
+  flowName: String
+  flowSeriesNumber: Int
+  flowLocked: Boolean
+  setVisualId: VisualIdType
+  assetPath: String
+  assets: SetAssets
+  plays: [Play!]
+}
+
+type SetAssets {
+  images: [SetImage]
+}
+
+type SetImage {
+  type: SetImageType
+  url: String!
+}
+
+enum SetImageType {
+  SET_IMAGE_TYPE_NIL
+  SPECIAL_EDITION_GAME_PANEL_EXTERIOR
+}
+
+type SetProgress {
+  set: Set
+  numTotalEditionSlots: Int
+  numFilledEditionSlots: Int
+}
+
+type Sets implements SortableCollection {
+  size: Int
+  data: [Set!]!
+}
+
+type SetsProgress {
+  progress: [SetProgress!]
+}
+
+type Showcase {
+  id: ID!
+  name: String!
+  userID: ID!
+  momentIDs: [ID!]
+}
+
+interface Sortable {
+  sortID: SortID
+}
+
+interface SortableCollection {
+  data: [Sortable]
+  size: Int
+}
+
+scalar SortID
+
+type StatsPlayerGameScores {
+  blocks: Int
+  points: Int
+  steals: Int
+  assists: Int
+  minutes: String
+  rebounds: Int
+  turnovers: Int
+  plusMinus: Int
+  flagrantFouls: Int
+  personalFouls: Int
+  technicalFouls: Int
+  twoPointsMade: Int
+  blockedAttempts: Int
+  fieldGoalsMade: Int
+  freeThrowsMade: Int
+  threePointsMade: Int
+  defensiveRebounds: Int
+  offensiveRebounds: Int
+  pointsOffTurnovers: Int
+  twoPointsAttempted: Int
+  assistTurnoverRatio: Float
+  fieldGoalsAttempted: Int
+  freeThrowsAttempted: Int
+  twoPointsPercentage: Float
+  fieldGoalsPercentage: Float
+  freeThrowsPercentage: Float
+  threePointsAttempted: Int
+  threePointsPercentage: Float
+  playerPosition: PlayerPosition
+}
+
+type StatsPlayerSeasonAverageScores {
+  minutes: String
+  blocks: Float
+  points: Float
+  steals: Float
+  assists: Float
+  rebounds: Float
+  turnovers: Float
+  plusMinus: Float
+  flagrantFouls: Float
+  personalFouls: Float
+  technicalFouls: Float
+  twoPointsMade: Float
+  blockedAttempts: Float
+  fieldGoalsMade: Float
+  freeThrowsMade: Float
+  threePointsMade: Float
+  defensiveRebounds: Float
+  offensiveRebounds: Float
+  pointsOffTurnovers: Float
+  twoPointsAttempted: Float
+  assistTurnoverRatio: Float
+  fieldGoalsAttempted: Float
+  freeThrowsAttempted: Float
+  twoPointsPercentage: Float
+  fieldGoalsPercentage: Float
+  freeThrowsPercentage: Float
+  threePointsAttempted: Float
+  threePointsPercentage: Float
+  efficiency: Float
+  true_shooting_attempts: Float
+  points_in_paint_made: Float
+  points_in_paint_attempted: Float
+  points_in_paint: Float
+  fouls_drawn: Float
+  offensive_fouls: Float
+  fast_break_points: Float
+  fast_break_points_attempted: Float
+  fast_break_points_made: Float
+  second_chance_points: Float
+  second_chance_points_attempted: Float
+  second_chance_points_made: Float
+}
+
+interface Syncable {
+  id: ID!
+  version: Version
+}
+
+type Tag {
+  id: ID!
+  name: String! @deprecated(reason: "name is from an old tag definition that is no longer used")
+  title: String!
+  visible: Boolean!
+  hardcourt: Boolean!
+  level: TagLevel!
+}
+
+enum TagLevel {
+  NIL
+  MOMENT
+  SETPLAY
+  PLAY
+}
+
+type Team {
+  id: ID!
+  name: String
+}
+
+type Teams {
+  size: Int
+  data: [Team!]!
+}
+
+type TeamScoresByQuarter {
+  quarterScores: [QuarterScore]
+}
+
+scalar Time
+
+input TransferPacksInput {
+  packIDs: [String!]!
+  receiverDapperID: String!
+}
+
+type TransferPacksResponse {
+  success: Boolean!
+}
+
+type UpdateUserSettingsResponse {
+  userSettings: UserSettings
+}
+
+input UpsertUserProfileInput {
+  flowAddress: String
+  dapperID: String!
+  email: String!
+  username: String
+  profileImageUrl: String
+  twitterHandle: String
+  segmentId: String
+  favoriteTeamID: String
+}
+
+type UpsertUserProfileResponse {
+  dapperID: ID!
+}
+
+scalar URL
+
+type User {
+  dapperID: String!
+  email: String!
+  flowAddress: String
+  username: String
+  profileImageUrl: String
+  twitterHandle: String
+  segmentID: String
+}
+
+type UserBallerStatus {
+  level: BallerStatusLevel
+  totalPoints: Int
+  milestones: [UserBallerStatusMilestone]
+}
+
+type UserBallerStatusMilestone {
+  label: BallerStatusMilestoneLabel
+  orderedTasks: [UserBallerStatusTask]
+  numCompletedActions: Int
+}
+
+type UserBallerStatusTask {
+  points: Int
+  status: BallerStatusTaskStatus
+  numRequiredActions: Int
+}
+
+type UserChallenge implements Sortable & Syncable {
+  id: ID!
+  version: Version
+  sortID: SortID
+  name: String!
+  description: String!
+  expirationDate: Time
+  slots: [ChallengeSlot!]
+  reward: ChallengeReward
+  rewardStatus: ChallengeRewardStatus
+  numUsersCompleted: Int
+}
+
+type UserChallenges implements SortableCollection {
+  size: Int
+  data: [UserChallenge!]!
+}
+
+type UserMomentListing {
+  id: ID
+  version: Version
+  price: Price
+  moment: MintedMoment
+  seller: User
+}
+
+type UserMomentListings {
+  set: Set
+  play: Play
+  assetPathPrefix: String
+  version: Version
+  priceRange: PriceRange
+  momentListings: [UserMomentListing!]
+  setPlay: MintedSetPlay
+  circulationCount: Int @deprecated(reason: "use flowRetired field found inside mintedSetPlay instead")
+  flowRetired: Boolean @deprecated(reason: "use flowRetired field found inside mintedSetPlay instead")
+  momentListingCount: Int!
+}
+
+type UserMomentListingsResponse {
+  data: UserMomentListings
+}
+
+type UserPublicInfo {
+  dapperID: String!
+  flowAddress: String
+  username: String
+  profileImageUrl: String
+  twitterHandle: String
+  createdAt: Time
+  favoriteTeamID: String
+}
+
+type UserSettings {
+  notificationSettings: NotificationSettings
+  updatedAt: Time
+}
+
+input UserSettingsUpdateInput {
+  notificationSettings: NotificationSettingsInput
+}
+
+type VendorMomentListing {
+  id: ID
+  set: Set
+  play: Play
+  version: Version
+  price: Price
+  assetPathPrefix: String
+
+  """admin-set previous price for sale display"""
+  previousPrice: Price
+  circulationCount: Int
+}
+
+scalar Version
+
+enum VisualIdType {
+  SET_VISUAL_NIL
+  SET_VISUAL_COMMON
+  SET_VISUAL_RARE
+  SET_VISUAL_LEGENDARY
+  SET_VISUAL_ULTIMATE
+}
+
