@@ -13,5 +13,5 @@ A flutter app to view TopShot listings and explore the marketplace
   <img src="./README_assets/screen-2.png" width="200" /> 
   <img src="./README_assets/screen-3.png" width="200" />
   <img src="./README_assets/screen-4.png" width="200" />
-  <img src="./README_assets/screen-5.png" width="200" />
+  <img src="./README_assets/screen-5.PNG" width="200" />
 </p>
