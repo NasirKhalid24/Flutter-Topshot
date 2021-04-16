@@ -1,7 +1,4 @@
-**:sos: NOTE: This app is decomissioned since the TopShot Marketplace API is no longer publically accessible :sos:**
---- 
-<br />
-
+**:sos: NOTE: This app is decomissioned since the [TopShot Marketplace API](https://github.com/NasirKhalid24/NBA-Topshot-Marketplace-API) is no longer publically accessible :sos:**
 # Flutter TopShot
 
 A flutter app to view TopShot listings and explore the marketplace
